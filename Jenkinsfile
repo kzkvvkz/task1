@@ -32,12 +32,16 @@ pipeline {
         stage('Run Containers') {
             steps {
                 sh '''
-                docker run -d --name flask-app --network app-network flask-app
+                docker network create app-network || true
+
+                docker run -d --name flask-app \
+                --network app-network \
+                flask-app
 
                 docker run -d --name nginx-proxy \
-                    --network app-network \
-                    -p 80:80 \
-                    nginx-proxy
+                --network app-network \
+                -p 80:80 \
+                nginx-proxy
                 '''
             }
         }
